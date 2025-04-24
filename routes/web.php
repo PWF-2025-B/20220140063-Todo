@@ -10,6 +10,7 @@ use App\Models\User;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::resource('todo', TodoController::class)->except(['show']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -22,11 +23,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/todo', [TodoController::class, 'index'])->name('todo.index');
     Route::get('/todo/create', [TodoController::class, 'create'])->name('todo.create');
-    Route::get('/todo/edit', [TodoController::class, 'edit'])->name('todo.edit');
-
     Route::get('/users', [UserController::class, 'index'])->name('user.index');
 });
 
 
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
