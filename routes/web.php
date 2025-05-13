@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TodoController;
@@ -60,6 +61,13 @@ Route::delete('/todo', [TodoController::class, 'destroyCompleted'])->name('todo.
 // delete user
 Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('user.destroy');
 
+// category
+Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
+Route::resource('category',CategoryController::class)->except(['show']);
+// edit category
+Route::get('/category/{category}/edit', [CategoryController::class, 'edit'])->name('category.edit');
+// delete category
+Route::delete('/category/{category}', [CategoryController::class, 'destroy'])->name('category.destroy');
 
 
 require __DIR__ . '/auth.php';
