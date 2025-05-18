@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use App\Models\Todo;
 use Illuminate\Support\Facades\Auth;
@@ -12,19 +13,26 @@ class TodoController extends Controller
     public function index()
     {
         // $todos = Todo::all();
-        $todos = Todo::where('user_id', Auth::id())
-            ->orderBy(
-                'created_at',
-                'desc'
-            )
-            ->get();
+        // $todos = Todo::where('user_id', Auth::id())
+        //     ->orderBy(
+        //         'created_at',
+        //         'desc'
+        //     )
+        //     ->get();
         // dd($todos);
-        $todosCompleted = Todo::where('user_id', auth()->user()->id)
+        // pratikum 9
+        $todos = Todo::with('category')
+            ->where('user_id', Auth::id())
+            ->orderBy('is_done', 'asc')
+            ->orderBy('created_at', 'desc')
+            ->simplePaginate(10);
+
+        $todosCompleted = Todo::where('user_id', Auth::id())
             ->where('is_done', true)
             ->count();
 
         return view('todo.index', compact('todos', 'todosCompleted'));
-        
+
     }
     public function create()
     {
@@ -39,7 +47,7 @@ class TodoController extends Controller
             $categories = Category::all();
             return view('todo.edit', compact('todo', 'categories'));
         }
-    
+
         return redirect()
             ->route('todo.index')
             ->with('danger', 'You are not authorized to edit this todo!');
@@ -51,12 +59,12 @@ class TodoController extends Controller
             'title' => 'required|max:255',
             'category_id' => 'nullable|exists:categories,id',
         ]);
-    
+
         $todo->update([
             'title' => ucfirst($request->title),
             'category_id' => $request->category_id,
         ]);
-    
+
         return redirect()
             ->route('todo.index')
             ->with('success', 'Todo updated successfully!');

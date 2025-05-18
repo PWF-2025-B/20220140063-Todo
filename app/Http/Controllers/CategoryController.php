@@ -10,7 +10,10 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
+        // $categories = Category::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
+        // return view('category.index', compact('categories'));
+        // pratikum 9
+        $categories = Category::with('todos')->where('user_id', Auth::id())->get();
         return view('category.index', compact('categories'));
     }
     public function create()
